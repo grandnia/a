@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import cloudpickle
 import joblib
 import os
 
@@ -7,11 +8,16 @@ st.title("Prediksi Profit Menu Restoran")
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 pipeline_path = os.path.join(BASE_DIR, "pipeline_rfnew.pkl")
+encoder_path = os.path.join(BASE_DIR, "target_encoder.pkl")
 
-# Load pipeline yang sudah lengkap
-pipeline = joblib.load(pipeline_path)
+# Load pipeline
+with open(pipeline_path, 'rb') as f:
+    pipeline = cloudpickle.load(f)
 
-# Input fitur user (pastikan kolom dan tipe sesuai pipeline)
+# Load label encoder (jika diperlukan)
+label_encoder = joblib.load(encoder_path)
+
+# Input user
 menu_item = st.text_input('Nama Menu', 'Nasi Goreng')
 restaurant_id = st.text_input('ID Restoran', 'R001')
 price = st.number_input('Harga Jual per Produk (Rp)', min_value=0, value=25000)
